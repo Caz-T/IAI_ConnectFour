@@ -2,8 +2,11 @@
 #include <unistd.h>
 #include "Point.h"
 #include "Strategy.h"
+#include "MyEngine.h"
 
 using namespace std;
+
+MyEngine* engine = nullptr;
 
 /*
 	策略函数接口,该函数被对抗平台调用,每次传入当前状态,要求输出你的落子点,该落子点必须是一个符合游戏规则的落子点,不然对抗平台会直接认为你的程序有误
@@ -49,14 +52,10 @@ extern "C" Point *getPoint(const int M, const int N, const int *top, const int *
 	*/
 	//Add your own code below
 
-	//a naive example
-	for (int i = N-1; i >= 0; i--) {
-		if (top[i] > 0) {
-			x = top[i] - 1;
-			y = i;
-			break;
-		}
-	}
+    if (engine == nullptr) engine = new MyEngine(M, N, noX, noY);
+    auto to_place = engine->search(lastX, lastY);
+    x = to_place->x;
+    y = to_place->y;
 
 	/*
 		不要更改这段代码
