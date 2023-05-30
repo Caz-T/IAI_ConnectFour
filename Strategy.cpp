@@ -56,6 +56,8 @@ extern "C" Point *getPoint(const int M, const int N, const int *top, const int *
     auto to_place = engine->search(lastX, lastY);
     x = to_place->x;
     y = to_place->y;
+    x = 7;
+    y = 2;
 
 	/*
 		不要更改这段代码
