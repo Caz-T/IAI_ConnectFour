@@ -6,8 +6,6 @@
 
 using namespace std;
 
-MyEngine* engine = nullptr;
-
 /*
 	策略函数接口,该函数被对抗平台调用,每次传入当前状态,要求输出你的落子点,该落子点必须是一个符合游戏规则的落子点,不然对抗平台会直接认为你的程序有误
 	
@@ -50,12 +48,9 @@ extern "C" Point *getPoint(const int M, const int N, const int *top, const int *
 		根据你自己的策略来返回落子点,也就是根据你的策略完成对x,y的赋值
 		该部分对参数使用没有限制，为了方便实现，你可以定义自己新的类、.h文件、.cpp文件
 	*/
+
 	//Add your own code below
 
-    if (engine == nullptr) engine = new MyEngine(M, N, noX, noY);
-    auto to_place = engine->search(lastX, lastY);
-    x = to_place->x;
-    y = to_place->y;
     x = 7;
     y = 2;
 
