@@ -51,7 +51,7 @@ extern "C" Point *getPoint(const int M, const int N, const int *top, const int *
 
 	//Add your own code below
 
-    x = 7;
+    x = M - 1;
     y = 2;
 
 	/*
