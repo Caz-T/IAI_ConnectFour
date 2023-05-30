@@ -41,7 +41,7 @@ private:
     int width, height;
     int ban_x, ban_y;
     node* memory;  // saves the computations
-    Point* to_debug;
+    Point* to_debug = nullptr;
 };
 
 #endif //STRATEGY_MYENGINE_H

@@ -33,7 +33,7 @@ MyEngine::MyEngine(const int m, const int n, const int bx, const int by): width(
 }
 
 Point *MyEngine::search(const int last_x, const int last_y) {
-    if (memory == nullptr) to_debug = new Point(0, 0);
+    if (to_debug == nullptr) to_debug = new Point(0, 0);
     else to_debug->y++;
     return to_debug;
 }
