@@ -69,7 +69,7 @@ node* MyEngine::expand(node* to_expand) {
             to_expand->children[i] = expanded;
             to_expand->curr_children_cnt = i + 1;
             step_into(expanded);
-            expanded->is_term = expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board) or not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board);
+            expanded->is_term = (expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board)) or (not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board));
             return expanded;
         }
     }
