@@ -7,6 +7,7 @@
 
 using namespace std;
 const double PONDER_LIMIT = 2.0 * CLOCKS_PER_SEC;
+const double UCT_CONST = 0.7;
 
 MyEngine* engine = nullptr;
 
@@ -55,7 +56,7 @@ extern "C" Point *getPoint(const int M, const int N, const int *top, const int *
 	//Add your own code below
     auto curr_time = clock();
 
-    if (engine == nullptr) engine = new MyEngine(M, N, noX, noY, );
+    if (engine == nullptr) engine = new MyEngine(M, N, noX, noY, UCT_CONST);
     auto to_place = engine->search(lastX, lastY, curr_time + PONDER_LIMIT);
     x = to_place->x;
     y = to_place->y;
