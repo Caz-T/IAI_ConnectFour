@@ -5,6 +5,7 @@
 #include <random>
 #include <algorithm>
 #include <ctime>
+#include <cassert>
 #include "MyEngine.h"
 #include "Judge.h"
 
@@ -52,7 +53,7 @@ bool MyEngine::column_is_full(const int n) {
 }
 
 void MyEngine::step_into(node* v) {
-    board[v->curr_x][v->curr_y] = v.is_mach ? 2 : 1;
+    board[v->curr_x][v->curr_y] = v->is_mach ? 2 : 1;
     top[v->curr_y] -= 1;
     if (v->curr_y == ban_y and top[v->curr_y] == ban_x) top[v->curr_y] -= 1;
 }
