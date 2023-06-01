@@ -42,6 +42,7 @@ public:
 class MyEngine {
 public:
     MyEngine(const int m, const int n, const int bx, const int by, double c);
+    ~MyEngine();
     Point* search(const int last_x, const int last_y, time_t ponder_limit);
     inline bool column_is_full(const int n);
 

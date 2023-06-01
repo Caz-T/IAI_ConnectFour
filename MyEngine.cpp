@@ -69,7 +69,7 @@ node* MyEngine::expand(node* to_expand) {
             to_expand->children[i] = expanded;
             to_expand->curr_children_cnt = i + 1;
             step_into(expanded);
-            expanded.is_term = expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board) or not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board);
+            expanded->is_term = expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board) or not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board);
             return expanded;
         }
     }
@@ -143,7 +143,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
         for (int i = 0; i < memory->curr_children_cnt; i++) {
             if (last_y == memory->children[i]->curr_y) {
                 auto new_root = memory->children[i];
-                memory.clean(new_root);
+                memory->clean(new_root);
                 delete memory;
                 memory = new_root;
                 step_into(new_root);
