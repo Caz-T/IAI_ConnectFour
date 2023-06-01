@@ -1,10 +1,12 @@
 #include <iostream>
 #include <unistd.h>
+#include <ctime>
 #include "Point.h"
 #include "Strategy.h"
 #include "MyEngine.h"
 
 using namespace std;
+const double PONDER_LIMIT = 2.0 * CLOCKS_PER_SEC;
 
 MyEngine* engine = nullptr;
 
@@ -51,11 +53,13 @@ extern "C" Point *getPoint(const int M, const int N, const int *top, const int *
 		该部分对参数使用没有限制，为了方便实现，你可以定义自己新的类、.h文件、.cpp文件
 	*/
 	//Add your own code below
+    auto curr_time = clock();
 
-    if (engine == nullptr) engine = new MyEngine(M, N, noX, noY);
-    auto to_place = engine->search(lastX, lastY);
+    if (engine == nullptr) engine = new MyEngine(M, N, noX, noY, );
+    auto to_place = engine->search(lastX, lastY, curr_time + PONDER_LIMIT);
+    x = to_place->x;
     y = to_place->y;
-    x = top[y] - 1;
+    delete to_place;
 
 	/*
 		不要更改这段代码
