@@ -112,7 +112,8 @@ node* MyEngine::tree_policy(node* curr_node) {
     return curr_node;
 }
 double MyEngine::default_policy(node* to_roll) {
-    bool mach_turn = not to_roll->is_mach;
+    cerr << "Starting default policy" << endl;
+    bool mach_turn = to_roll->is_mach;
     if (mach_turn) {
         if (machineWin(to_roll->curr_x, to_roll->curr_y, height, width, board)) return 1.0;
         if (isTie(width, top)) return 0.0;
