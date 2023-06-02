@@ -241,7 +241,7 @@ void MyEngine::print_board() const {
 
 int MyEngine::ikanakerebanaranai() {
     // probe for definite wins
-    for (int layer = 0; layer < 3; layer++) {
+    for (int layer = 0; layer < 1; layer++) {
         for (int j = 0; j < width; j++) {
             for (int i = 0; i < height; i++) {
                 buffer[i][j] = board[i][j];
