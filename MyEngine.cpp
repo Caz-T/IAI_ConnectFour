@@ -172,6 +172,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
             }
         }
     }
+    cerr << "Initialised / Stepped forward memory" << endl;
 
     int cnt = 0;
     while (clock() < ponder_limit and cnt < 1000000) {
