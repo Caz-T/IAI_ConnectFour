@@ -13,6 +13,7 @@ using namespace std;
 
 node::node(int x, int y, int w, int h, node* p): curr_x(x), curr_y(y), parent(p), width(w), height(h) {
     children = new node*[w];
+    for (int i = 0; i < w; i++) children[i] = nullptr;
     is_mach = p and not p->is_mach;
 }
 
@@ -167,6 +168,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
                 memory->clean(new_root);
                 delete memory;
                 memory = new_root;
+                memory->parent = nullptr;
                 step_into(new_root);
                 break;
             }
@@ -184,6 +186,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
     memory->clean(to_ret);
     delete memory;
     memory = to_ret;
+    memory->parent = nullptr;
     step_into(to_ret);
     return new Point(to_ret->curr_x, to_ret->curr_y);
 }
