@@ -5,7 +5,7 @@
 #include <random>
 #include <cassert>
 #include <iostream>
-#include <string>
+#include <cstring>
 #include "MyEngine.h"
 #include "Judge.h"
 
