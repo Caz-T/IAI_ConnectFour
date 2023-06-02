@@ -129,19 +129,20 @@ double MyEngine::default_policy(node* to_roll) {
     }
     cerr << "Constructed rollout board" << endl;
     while (true) {
-        int choice = rand() % width;
-        while (column_is_full(choice, true)) {
-            choice += 1;
-            choice %= width;
+        int choice_y = rand() % width;
+        while (column_is_full(choice_y, true)) {
+            choice_y += 1;
+            choice_y %= width;
         }
-        buffer[buffer_top[choice]][choice] = mach_turn ? 2 : 1;
-        buffer_top[choice] -= 1;
-        if (choice == ban_y and buffer_top[choice] == ban_x) buffer_top[choice] -= 1;
+        auto choice_x = buffer_top[choice_y];
+        if (choice_y == ban_y and choice_x == ban_x) choice_x -= 1;
+        buffer[choice_x][choice_y] = mach_turn ? 2 : 1;
+        buffer_top[choice_y] = choice_x - 1;
         if (mach_turn) {
-            if (machineWin(buffer_top[choice], choice, height, width, buffer)) return 1.0;
+            if (machineWin(choice_x, choice_y, height, width, buffer)) return 1.0;
             if (isTie(width, buffer_top)) return 0.0;
         } else {
-            if (userWin(buffer_top[choice], choice, height, width, buffer)) return -1.0;
+            if (userWin(choice_x, choice_y, height, width, buffer)) return -1.0;
             if (isTie(width, buffer_top)) return 0.0;
         }
         mach_turn = not mach_turn;
