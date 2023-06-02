@@ -121,10 +121,13 @@ double MyEngine::default_policy(node* to_roll) {
         if (userWin(to_roll->curr_x, to_roll->curr_y, height, width, board)) return -1.0;
         if (isTie(width, top)) return 0.0;
     }
+    mach_turn = not mach_turn;
+    cerr << "Game not ended, starting rollout" << endl;
     for (int j = 0; j < width; j++) {
         buffer_top[j] = top[j];
         for (int i = 0; i < height; i++) buffer[i][j] = board[i][j];
     }
+    cerr << "Constructed rollout board" << endl;
     while (true) {
         int choice = rand() % width;
         while (column_is_full(choice, true)) {
@@ -142,6 +145,8 @@ double MyEngine::default_policy(node* to_roll) {
             if (isTie(width, buffer_top)) return 0.0;
         }
         mach_turn = not mach_turn;
+
+        cerr << "Rolling out..." << endl;
     }
     assert(false);
 }
