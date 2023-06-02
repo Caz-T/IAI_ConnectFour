@@ -176,17 +176,25 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
 
     int cnt = 0;
     while (clock() < ponder_limit and cnt < 1000000) {
+        cerr << "Tree policy" << endl;
         auto vl = tree_policy(memory);
+        cerr << "Default policy" << endl;
         auto delta = default_policy(vl);
+        cerr << "Propagate backwards" << endl;
         propagate_backwards(vl, delta);
         cnt += 1;
     }
     auto to_ret = best_child(memory);
+    cerr << "Best move: (" << to_ret->curr_x << ", " << to_ret->curr_y << ")" << endl;
+    cerr << "Cleaning memory...";
     memory->clean(to_ret);
+    cerr << "finished" << endl;
     delete memory;
+    cerr << "Memory deleted" << endl;
     memory = to_ret;
     memory->parent = nullptr;
     step_into(to_ret);
+    cerr << "Stepped forward" << endl;
     return new Point(to_ret->curr_x, to_ret->curr_y);
 }
 
