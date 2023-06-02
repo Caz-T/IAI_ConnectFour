@@ -37,4 +37,37 @@ int main()
     return 0;
 }
 
+#else
+// For local debugging purposes only
+
+#include <iostream>
+#include <cstdio>
+#include "Point.h"
+#include "Strategy.h"
+
+int main()
+{
+    int noX, noY;
+    int lastX, lastY;
+    int row, col;
+    int* board; //chess board
+    int* top; //available position
+
+    scanf("%d %d %d %d", &row, &col, &noX, &noY);
+    board = new int[row * col];
+    top = new int[col];
+    while(true)
+    {
+        std::cin >> lastX >> lastY;
+        for(int i = 0; i < col; i ++) std::cin >> top[i];
+        for(int i = 0; i < row * col; i ++) std::cin >> board[i];
+
+        Point* point = getPoint(row, col, top, board, lastX, lastY, noX, noY);
+        char msg[6];
+        std::cout << point->x, point->y;
+        clearPoint(point);
+    }
+    return 0;
+}
+
 #endif  // ONLINE_JUDGE

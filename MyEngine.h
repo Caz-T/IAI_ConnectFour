@@ -36,7 +36,7 @@ public:
     int visit_count = 0;
     double q = 0.0;
 
-    void clean(node* to_save = nullptr);
+    void clean(node* to_save = nullptr) const;
 };
 
 class MyEngine {
@@ -48,7 +48,7 @@ public:
 
 private:
     node* expand(node*);
-    node* best_child(node*);
+    node* best_child(node*) const;
     node* tree_policy(node*);
     double default_policy(node*);
     void propagate_backwards(node*, double delta);
@@ -58,7 +58,7 @@ private:
 
     int width, height;
     int ban_x, ban_y;
-    node* memory;  // Root of the current decision tree
+    node* memory = nullptr;  // Root of the current decision tree
     int** board;
     int* top;
     // Current board status.

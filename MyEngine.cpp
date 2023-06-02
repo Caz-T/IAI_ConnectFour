@@ -3,9 +3,8 @@
 //
 
 #include <random>
-#include <algorithm>
-#include <ctime>
 #include <cassert>
+#include <iostream>
 #include "MyEngine.h"
 #include "Judge.h"
 
@@ -23,10 +22,11 @@ node::~node() {
 inline bool node::is_terminal() const { return is_term; }
 inline bool node::is_fully_expanded() const { return curr_children_cnt >= width; }
 
-void node::clean(node *to_save) {
+void node::clean(node *to_save) const {
     for (int i = 0; i < curr_children_cnt; i++) {
+        if (children[i] == nullptr) continue;
         if (children[i] != to_save) {
-            clean(children[i]);
+            children[i]->clean();
             delete children[i];
         }
     }
@@ -67,7 +67,8 @@ node* MyEngine::expand(node* to_expand) {
         if (not column_is_full(i)) {
             auto expanded = new node(this->top[i], i, this->width, this->height, to_expand);
             to_expand->children[i] = expanded;
-            to_expand->curr_children_cnt = i + 1;
+            while (i < width and column_is_full(i) ) i += 1;
+            to_expand->curr_children_cnt = i;
             step_into(expanded);
             expanded->is_term = (expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board)) or (not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board));
             return expanded;
@@ -75,11 +76,12 @@ node* MyEngine::expand(node* to_expand) {
     }
     assert(false);
 }
-node* MyEngine::best_child(node* to_check) {
+node* MyEngine::best_child(node* to_check) const {
     double best_val = -1;
     node* to_ret = nullptr;
     for (int i = 0; i < to_check->curr_children_cnt; i++) {
         auto to_ex = to_check->children[i];
+        if (to_ex == nullptr) continue;
         double val = to_check->is_mach ? -to_ex->q : to_ex->q;
         // If to_check (the current node in question) is made by machine, then we aim to pick the best move for human move. Vice versa.
         val = val / to_ex->visit_count + uct_const * sqrt(2 * log(to_check->visit_count) / to_ex->visit_count);
@@ -127,9 +129,10 @@ double MyEngine::default_policy(node* to_roll) {
     assert(false);
 }
 void MyEngine::propagate_backwards(node* to_report, double delta) {
-    while (to_report) {
+    while (true) {
         to_report->q += delta;
         to_report->visit_count += 1;
+        if (to_report->parent == nullptr) break;
         step_from(to_report);
         to_report = to_report->parent;
     }
@@ -141,6 +144,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
         if (last_x != -1 and last_y != -1) step_into(memory);
     } else {
         for (int i = 0; i < memory->curr_children_cnt; i++) {
+            if (memory->children[i] == nullptr) continue;
             if (last_y == memory->children[i]->curr_y) {
                 auto new_root = memory->children[i];
                 memory->clean(new_root);
