@@ -54,11 +54,11 @@ extern "C" Point *getPoint(const int M, const int N, const int *top, const int *
 		该部分对参数使用没有限制，为了方便实现，你可以定义自己新的类、.h文件、.cpp文件
 	*/
 	//Add your own code below
-    /* cerr << lastX << " " << lastY << " ";
-     * for (int i = 0; i < N; i++) cerr << top[i] << " ";
-     * for (int i = 0; i < M * N; i++) cerr << _board[i] << " ";
-     * cerr << endl;
-     */
+    cerr << lastX << " " << lastY << " ";
+    for (int i = 0; i < N; i++) cerr << top[i] << " ";
+    for (int i = 0; i < M * N; i++) cerr << _board[i] << " ";
+    cerr << endl;
+
 
     auto curr_time = clock();
 
