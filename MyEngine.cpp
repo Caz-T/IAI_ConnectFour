@@ -248,73 +248,47 @@ int MyEngine::ikanakerebanaranai() {
         buffer_top[j] = top[j];
     }
 
-    for (int antepenult = 0; antepenult < width; antepenult++) {
-        if (column_is_full(antepenult, true)) continue;
-        bool flag_1 = false;
-        auto antepenult_x = buffer_top[antepenult];
-        step_into_faked(buffer_top[antepenult], antepenult, true);
-        if (machineWin(antepenult_x, antepenult, height, width, buffer)) return antepenult;
-        for (int oppo_move_1 = 0; oppo_move_1 < width; oppo_move_1++) {
-            if (column_is_full(oppo_move_1, true)) continue;
-            bool counterflag_1 = true;
-            auto oppo_x_1 = buffer_top[oppo_move_1];
-            step_into_faked(oppo_x_1, oppo_move_1, false);
-            if (userWin(oppo_x_1, oppo_move_1, height, width, buffer)) {
-                step_from_faked(oppo_x_1, oppo_move_1);
-                break;
-            }
-            for (int penult = 0; penult < width; penult++) {
-                if (column_is_full(penult, true)) continue;
-                auto penult_x = buffer_top[penult];
-                bool flag_2 = false;
-                step_into_faked(penult_x, penult, true);
-                if (machineWin(antepenult_x, antepenult, height, width, buffer)) {
-                    step_from_faked(antepenult_x, antepenult);
-                    break;
-                }
-                for (int oppo_move_2 = 0; oppo_move_2 < width; oppo_move_2++) {
-                    if (column_is_full(oppo_move_2, true)) continue;
-                    bool counterflag_2 = true;
-                    auto oppo_x_2 = buffer_top[oppo_move_2];
-                    step_into_faked(oppo_x_2, oppo_move_2, false);
-                    if (userWin(oppo_x_2, oppo_move_2, height, width, buffer)) {
-                        step_from_faked(oppo_x_2, oppo_move_2);
-                        break;
-                    }
-                    for (int ultima = 0; ultima < width; ultima++) {
-                        if (column_is_full(ultima, true)) continue;
-                        auto ultima_x = buffer_top[ultima];
-                        step_into_faked(ultima_x, ultima, true);
-                        if (machineWin(ultima_x, ultima, height, width, buffer)) {
-                            step_from_faked(ultima_x, ultima);
-                            counterflag_2 = false;
-                            break;
-                        }
-                        step_from_faked(ultima_x, ultima);
-                    }
-                    if (counterflag_2) {  // no move_2's can save the user
-                        step_from_faked(oppo_x_2, oppo_move_2);
-                        flag_2 = true;
-                        break;
-                    }
-                    step_from_faked(oppo_x_2, oppo_move_2);
-                }
-                if (flag_2) { // no move_2's can save the user
-                    step_from_faked(antepenult_x, antepenult);
-                    counterflag_1 = false;
-                    break;
-                }
-                step_from_faked(antepenult_x, antepenult);
-            }
-            if (counterflag_1) { // no move_1's can save the user
-                step_from_faked(oppo_x_1, oppo_move_1);
-                flag_1 = true;
-                break;
-            }
-            step_from_faked(oppo_x_1, oppo_move_1);
-        }
-        if (flag_1) return antepenult; // no move_1's can save the user
-        step_from_faked(antepenult_x, antepenult);
+    for (int i = 0; i < width; i++) {
+        if (column_is_full(i, true)) continue;
+        if (leads_to_victory(buffer_top[i], i, 3)) return i;
     }
     return -1; // zannennagara...
+}
+
+bool MyEngine::leads_to_victory(int x, int y, int allowed_recursions) {
+    step_into_faked(x, y, true);
+    if (machineWin(x, y, height, width, buffer)) {
+        step_from_faked(x, y);
+        return true;
+    }
+    if (isTie(width, buffer_top) or allowed_recursions == 0) {
+        step_from_faked(x, y);
+        return false;
+    }
+    for (int opy = 0; opy < width; opy++) { // opponent's y
+        if (column_is_full(opy, true)) continue; // this won't cause infinite loop since there's no draws hitherto
+        int opx = buffer_top[opy];
+        step_into_faked(opx, opy, false);
+        if (userWin(opx, opy, height, width, buffer) or isTie(width, buffer_top)) {
+            step_from_faked(opx, opy);
+            step_from_faked(x, y);
+            return false;
+        }
+        bool flag = true;
+        for (int response = 0; response < width; response++) {
+            if (column_is_full(response, true)) continue;
+            if (not leads_to_victory(buffer_top[response], response, allowed_recursions - 1)) {
+                flag = false;
+                break;
+            }
+        }
+        if (not flag) {
+            step_from_faked(opx, opy);
+            step_from_faked(x, y);
+            return false;
+        }
+        step_from_faked(opx, opy);
+    }
+    step_from_faked(x, y);
+    return true;
 }

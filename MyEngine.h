@@ -61,6 +61,10 @@ private:
     void propagate_backwards(node*, double delta);
 
     int ikanakerebanaranai();
+    bool leads_to_victory(int x, int y, int allowed_recursions);
+    // A move "leads to victory", i.f.f.
+    // i)   the move immediately wins the game; or
+    // ii)  recursion is allowed, and for each move the opponent could make, there is a move that leads to victory.
 
     int width, height;
     int ban_x, ban_y;
