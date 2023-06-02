@@ -313,7 +313,7 @@ int MyEngine::ikanakerebanaranai() {
             }
             step_from_faked(oppo_x_1, oppo_move_1);
         }
-        if (not flag_1) return antepenult; // no move_1's can save the user
+        if (flag_1) return antepenult; // no move_1's can save the user
         step_from_faked(antepenult_x, antepenult);
     }
     return -1; // zannennagara...
