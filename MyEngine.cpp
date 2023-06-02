@@ -240,19 +240,35 @@ void MyEngine::print_board() const {
 }
 
 int MyEngine::ikanakerebanaranai() {
-    // move the board into the buffer for neatness
-    for (int j = 0; j < width; j++) {
-        for (int i = 0; i < height; i++) {
-            buffer[i][j] = board[i][j];
+    // probe for definite wins
+    for (int layer = 0; layer < 3; layer++) {
+        for (int j = 0; j < width; j++) {
+            for (int i = 0; i < height; i++) {
+                buffer[i][j] = board[i][j];
+            }
+            buffer_top[j] = top[j];
         }
-        buffer_top[j] = top[j];
+        for (int i = 0; i < width; i++) {
+            if (column_is_full(i, true)) continue;
+            if (leads_to_victory(buffer_top[i], i, layer)) return i;
+        }
+        for (int j = 0; j < width; j++) {
+            for (int i = 0; i < height; i++) {
+                switch(board[i][j]) {
+                    case 2: buffer[i][j] = 1; break;
+                    case 1: buffer[i][j] = 2; break;
+                    default: buffer[i][j] = 0; break;
+                }
+            }
+            buffer_top[j] = top[j];
+        }
+        for (int i = 0; i < width; i++) {
+            if (column_is_full(i, true)) continue;
+            if (leads_to_victory(buffer_top[i], i, layer)) return i;
+        }
     }
 
-    for (int i = 0; i < width; i++) {
-        if (column_is_full(i, true)) continue;
-        if (leads_to_victory(buffer_top[i], i, 3)) return i;
-    }
-    return -1; // zannennagara...
+    return -1;
 }
 
 bool MyEngine::leads_to_victory(int x, int y, int allowed_recursions) {
