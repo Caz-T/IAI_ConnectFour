@@ -67,6 +67,15 @@ void MyEngine::step_from(node* v) {
     board[v->curr_x][v->curr_y] = 0;
     top[v->curr_y] = v->curr_x;
 }
+void MyEngine::step_into_faked(int x, int y, bool is_mach) {
+    buffer[x][y] = is_mach ? 2 : 1;
+    buffer_top[y] -= 1;
+    if (y == ban_y and buffer_top[y] == ban_x) buffer_top[y] -= 1;
+}
+void MyEngine::step_from_faked(int x, int y) {
+    buffer[x][y] = 0;
+    buffer_top[y] = x;
+}
 
 node* MyEngine::expand(node* to_expand) {
     for (int i = to_expand->curr_children_cnt; i < width; i++) {
@@ -180,18 +189,29 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
         }
     }
     // cerr << "Initialised / Stepped forward memory" << endl;
-
-    int cnt = 0;
-    while (clock() < ponder_limit and cnt < 1000000) {
-        // cerr << "Tree policy" << endl;
-        auto vl = tree_policy(memory);
-        // cerr << "Default policy" << endl;
-        auto delta = default_policy(vl);
-        // cerr << "Propagate backwards" << endl;
-        propagate_backwards(vl, delta);
-        cnt += 1;
+    node* to_ret = nullptr;
+    int kanarazu = ikanakerebanaranai();
+    if (kanarazu != -1) {
+        while (memory->children[kanarazu] == nullptr) {
+            auto vl = tree_policy(memory);
+            auto delta = default_policy(vl);
+            propagate_backwards(vl, delta);
+        }
+        to_ret = memory->children[kanarazu];
+    } else {
+        int cnt = 0;
+        while (clock() < ponder_limit and cnt < 1000000) {
+            // cerr << "Tree policy" << endl;
+            auto vl = tree_policy(memory);
+            // cerr << "Default policy" << endl;
+            auto delta = default_policy(vl);
+            // cerr << "Propagate backwards" << endl;
+            propagate_backwards(vl, delta);
+            cnt += 1;
+        }
+        to_ret = best_child(memory);
     }
-    auto to_ret = best_child(memory);
+
     // cerr << "Best move: (" << to_ret->curr_x << ", " << to_ret->curr_y << ")" << endl;
     // cerr << "Cleaning memory...";
     memory->clean(to_ret);
@@ -216,4 +236,84 @@ void MyEngine::print_board() const {
     cout << "Top: ";
     for (int j = 0; j < width; j++) cout << top[j] << " ";
     cout << endl;
+}
+
+int MyEngine::ikanakerebanaranai() {
+    // move the board into the buffer for neatness
+    for (int j = 0; j < width; j++) {
+        for (int i = 0; i < height; i++) {
+            buffer[i][j] = board[i][j];
+        }
+        buffer_top[j] = top[j];
+    }
+
+    for (int antepenult = 0; antepenult < width; antepenult++) {
+        if (column_is_full(antepenult)) continue;
+        bool flag_1 = false;
+        auto antepenult_x = buffer_top[antepenult];
+        step_into_faked(buffer_top[antepenult], antepenult, true);
+        if (machineWin(antepenult_x, antepenult, height, width, buffer)) return antepenult;
+        for (int oppo_move_1 = 0; oppo_move_1 < width; oppo_move_1++) {
+            if (column_is_full(oppo_move_1)) continue;
+            bool counterflag_1 = true;
+            auto oppo_x_1 = buffer_top[oppo_move_1];
+            step_into_faked(oppo_x_1, oppo_move_1, false);
+            if (userWin(oppo_x_1, oppo_move_1, height, width, buffer)) {
+                step_from_faked(oppo_x_1, oppo_move_1);
+                break;
+            }
+            for (int penult = 0; penult < width; penult++) {
+                if (column_is_full(penult)) continue;
+                auto penult_x = buffer_top[penult];
+                bool flag_2 = false;
+                step_into_faked(penult_x, penult, true);
+                if (machineWin(antepenult_x, antepenult, height, width, buffer)) {
+                    step_from_faked(antepenult_x, antepenult);
+                    break;
+                }
+                for (int oppo_move_2 = 0; oppo_move_2 < width; oppo_move_2++) {
+                    if (column_is_full(oppo_move_2)) continue;
+                    bool counterflag_2 = true;
+                    auto oppo_x_2 = buffer_top[oppo_move_2];
+                    step_into_faked(oppo_x_2, oppo_move_2, false);
+                    if (userWin(oppo_x_2, oppo_move_2, height, width, buffer)) {
+                        step_from_faked(oppo_x_2, oppo_move_2);
+                        break;
+                    }
+                    for (int ultima = 0; ultima < width; ultima++) {
+                        if (column_is_full(ultima)) continue;
+                        auto ultima_x = buffer_top[ultima];
+                        step_into_faked(ultima_x, ultima, true);
+                        if (machineWin(ultima_x, ultima, height, width, buffer)) {
+                            step_from_faked(ultima_x, ultima);
+                            counterflag_2 = false;
+                            break;
+                        }
+                        step_from_faked(ultima_x, ultima);
+                    }
+                    if (counterflag_2) {  // move_2 escapes death
+                        step_from_faked(oppo_x_2, oppo_move_2);
+                        flag_2 = true;
+                        break;
+                    }
+                    step_from_faked(oppo_x_2, oppo_move_2);
+                }
+                if (flag_2) { // no move_2's can save the user
+                    step_from_faked(antepenult_x, antepenult);
+                    counterflag_1 = false;
+                    break;
+                }
+                step_from_faked(antepenult_x, antepenult);
+            }
+            if (counterflag_1) { // move_1 escapes death
+                step_from_faked(oppo_x_1, oppo_move_1);
+                flag_1 = true;
+                break;
+            }
+            step_from_faked(oppo_x_1, oppo_move_1);
+        }
+        if (not flag_1) return antepenult; // no move_1's can save the user
+        step_from_faked(antepenult_x, antepenult);
+    }
+    return -1; // zannennagara...
 }

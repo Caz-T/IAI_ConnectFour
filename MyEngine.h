@@ -49,14 +49,18 @@ public:
     inline bool column_is_full(int n, bool is_dry_run = false);
 
 private:
+    void step_into(node*);
+    void step_into_faked(int, int, bool);
+    void step_from(node*);
+    void step_from_faked(int, int);
+
     node* expand(node*);
     node* best_child(node*) const;
     node* tree_policy(node*);
     double default_policy(node*);
     void propagate_backwards(node*, double delta);
 
-    void step_into(node*);
-    void step_from(node*);
+    int ikanakerebanaranai();
 
     int width, height;
     int ban_x, ban_y;
