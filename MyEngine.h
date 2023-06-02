@@ -41,10 +41,10 @@ public:
 
 class MyEngine {
 public:
-    MyEngine(const int m, const int n, const int bx, const int by, double c);
+    MyEngine(int m, int n, int bx, int by, double c);
     ~MyEngine();
-    Point* search(const int last_x, const int last_y, time_t ponder_limit);
-    inline bool column_is_full(const int n);
+    Point* search(int last_x, int last_y, time_t ponder_limit);
+    inline bool column_is_full(int n, bool is_dry_run = false);
 
 private:
     node* expand(node*);
@@ -68,6 +68,9 @@ private:
     int* buffer_top;
 
     double uct_const;
+
+    // for debugging only
+    void print_board() const;
 };
 
 #endif //STRATEGY_MYENGINE_H

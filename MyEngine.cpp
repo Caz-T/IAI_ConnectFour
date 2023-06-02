@@ -5,6 +5,7 @@
 #include <random>
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include "MyEngine.h"
 #include "Judge.h"
 
@@ -36,6 +37,7 @@ MyEngine::MyEngine(const int m, const int n, const int bx, const int by, double 
 board(new int*[m]), top(new int[n]), buffer(new int*[m]), buffer_top(new int[n]), uct_const(c) {
     for (int i = 0; i < m; i++) {
         board[i] = new int[n];
+        memset(board[i], 0, sizeof(int) * n);
         buffer[i] = new int[n];
     }
     for (int i = 0; i < n; i++) top[i] = m - 1;
@@ -48,16 +50,21 @@ MyEngine::~MyEngine() {
     delete[] top;
 }
 
-bool MyEngine::column_is_full(const int n) {
-    return (ban_x == 0 and ban_y == n) ? board[1][n] != 0 : board[0][n] != 0;
+bool MyEngine::column_is_full(const int n, bool is_dry_run) {
+    auto board_to_check = is_dry_run ? buffer : board;
+    return (ban_x == 0 and ban_y == n) ? board_to_check[1][n] != 0 : board_to_check[0][n] != 0;
 }
 
 void MyEngine::step_into(node* v) {
+    // cout << "Stepping into (" << v->curr_x << ", " << v->curr_y << ")" << endl;
+    // print_board();
     board[v->curr_x][v->curr_y] = v->is_mach ? 2 : 1;
     top[v->curr_y] -= 1;
     if (v->curr_y == ban_y and top[v->curr_y] == ban_x) top[v->curr_y] -= 1;
 }
 void MyEngine::step_from(node* v) {
+    // cout << "Stepping out from (" << v->curr_x << ", " << v->curr_y << ")" << endl;
+    // print_board();
     board[v->curr_x][v->curr_y] = 0;
     top[v->curr_y] = v->curr_x;
 }
@@ -67,6 +74,7 @@ node* MyEngine::expand(node* to_expand) {
         if (not column_is_full(i)) {
             auto expanded = new node(this->top[i], i, this->width, this->height, to_expand);
             to_expand->children[i] = expanded;
+            i += 1;
             while (i < width and column_is_full(i) ) i += 1;
             to_expand->curr_children_cnt = i;
             step_into(expanded);
@@ -105,16 +113,18 @@ node* MyEngine::tree_policy(node* curr_node) {
 double MyEngine::default_policy(node* to_roll) {
     for (int j = 0; j < width; j++) {
         buffer_top[j] = top[j];
-        for (int i = top[j] + 1; i < height; i++) buffer[i][j] = board[i][j];
+        for (int i = 0; i < height; i++) buffer[i][j] = board[i][j];
     }
     bool mach_turn = not to_roll->is_mach;
     while (true) {
         int choice = rand() % width;
-        while (column_is_full(choice)) {
+        while (column_is_full(choice, true)) {
             choice += 1;
             choice %= width;
         }
         buffer[buffer_top[choice]][choice] = mach_turn ? 2 : 1;
+        buffer_top[choice] -= 1;
+        if (choice == ban_y and buffer_top[choice] == ban_x) buffer_top[choice] -= 1;
         if (mach_turn) {
             if (machineWin(buffer_top[choice], choice, height, width, buffer)) return 1.0;
             if (isTie(width, buffer_top)) return 0.0;
@@ -122,8 +132,6 @@ double MyEngine::default_policy(node* to_roll) {
             if (userWin(buffer_top[choice], choice, height, width, buffer)) return -1.0;
             if (isTie(width, buffer_top)) return 0.0;
         }
-        buffer_top[choice] -= 1;
-        if (choice == ban_y and buffer_top[choice] == ban_x) buffer_top[choice] -= 1;
         mach_turn = not mach_turn;
     }
     assert(false);
@@ -156,10 +164,12 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
         }
     }
 
-    while (clock() < ponder_limit) {
+    int cnt = 0;
+    while (clock() < ponder_limit and cnt < 1000000) {
         auto vl = tree_policy(memory);
         auto delta = default_policy(vl);
         propagate_backwards(vl, delta);
+        cnt += 1;
     }
     auto to_ret = best_child(memory);
     memory->clean(to_ret);
@@ -167,4 +177,17 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
     memory = to_ret;
     step_into(to_ret);
     return new Point(to_ret->curr_x, to_ret->curr_y);
+}
+
+void MyEngine::print_board() const {
+    cout << "Board:" << endl;
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            cout << board[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << "Top: ";
+    for (int j = 0; j < width; j++) cout << top[j] << " ";
+    cout << endl;
 }
