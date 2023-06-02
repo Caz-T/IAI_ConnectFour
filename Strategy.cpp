@@ -65,7 +65,7 @@ extern "C" Point *getPoint(const int M, const int N, const int *top, const int *
     auto to_place = engine->search(lastX, lastY, curr_time + PONDER_LIMIT);
     x = to_place->x;
     y = to_place->y;
-    delete to_place;
+    clearPoint(to_place);
 
 	/*
 		不要更改这段代码
