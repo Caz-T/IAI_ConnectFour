@@ -112,7 +112,7 @@ node* MyEngine::tree_policy(node* curr_node) {
     return curr_node;
 }
 double MyEngine::default_policy(node* to_roll) {
-    cerr << "Starting default policy" << endl;
+    // cerr << "Starting default policy" << endl;
     bool mach_turn = to_roll->is_mach;
     if (mach_turn) {
         if (machineWin(to_roll->curr_x, to_roll->curr_y, height, width, board)) return 1.0;
@@ -122,12 +122,12 @@ double MyEngine::default_policy(node* to_roll) {
         if (isTie(width, top)) return 0.0;
     }
     mach_turn = not mach_turn;
-    cerr << "Game not ended, starting rollout" << endl;
+    // cerr << "Game not ended, starting rollout" << endl;
     for (int j = 0; j < width; j++) {
         buffer_top[j] = top[j];
         for (int i = 0; i < height; i++) buffer[i][j] = board[i][j];
     }
-    cerr << "Constructed rollout board" << endl;
+    // cerr << "Constructed rollout board" << endl;
     while (true) {
         int choice_y = rand() % width;
         while (column_is_full(choice_y, true)) {
@@ -147,7 +147,7 @@ double MyEngine::default_policy(node* to_roll) {
         }
         mach_turn = not mach_turn;
 
-        cerr << "Rolling out..." << endl;
+        // cerr << "Rolling out..." << endl;
     }
     assert(false);
 }
@@ -179,29 +179,29 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
             }
         }
     }
-    cerr << "Initialised / Stepped forward memory" << endl;
+    // cerr << "Initialised / Stepped forward memory" << endl;
 
     int cnt = 0;
     while (clock() < ponder_limit and cnt < 1000000) {
-        cerr << "Tree policy" << endl;
+        // cerr << "Tree policy" << endl;
         auto vl = tree_policy(memory);
-        cerr << "Default policy" << endl;
+        // cerr << "Default policy" << endl;
         auto delta = default_policy(vl);
-        cerr << "Propagate backwards" << endl;
+        // cerr << "Propagate backwards" << endl;
         propagate_backwards(vl, delta);
         cnt += 1;
     }
     auto to_ret = best_child(memory);
-    cerr << "Best move: (" << to_ret->curr_x << ", " << to_ret->curr_y << ")" << endl;
-    cerr << "Cleaning memory...";
+    // cerr << "Best move: (" << to_ret->curr_x << ", " << to_ret->curr_y << ")" << endl;
+    // cerr << "Cleaning memory...";
     memory->clean(to_ret);
-    cerr << "finished" << endl;
+    // cerr << "finished" << endl;
     delete memory;
-    cerr << "Memory deleted" << endl;
+    // cerr << "Memory deleted" << endl;
     memory = to_ret;
     memory->parent = nullptr;
     step_into(to_ret);
-    cerr << "Stepped forward" << endl;
+    // cerr << "Stepped forward" << endl;
     return new Point(to_ret->curr_x, to_ret->curr_y);
 }
 
