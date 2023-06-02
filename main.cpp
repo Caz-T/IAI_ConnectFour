@@ -63,8 +63,7 @@ int main()
         for(int i = 0; i < row * col; i ++) std::cin >> board[i];
 
         Point* point = getPoint(row, col, top, board, lastX, lastY, noX, noY);
-        char msg[6];
-        std::cout << point->x, point->y;
+        std::cout << point->x << " " << point->y << std::endl;
         clearPoint(point);
     }
     return 0;

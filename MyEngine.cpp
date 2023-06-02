@@ -78,7 +78,9 @@ node* MyEngine::expand(node* to_expand) {
             while (i < width and column_is_full(i) ) i += 1;
             to_expand->curr_children_cnt = i;
             step_into(expanded);
-            expanded->is_term = (expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board)) or (not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board));
+            expanded->is_term = (expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board))
+                    or (not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board))
+                    or isTie(width, top);
             return expanded;
         }
     }
@@ -111,11 +113,18 @@ node* MyEngine::tree_policy(node* curr_node) {
     return curr_node;
 }
 double MyEngine::default_policy(node* to_roll) {
+    bool mach_turn = not to_roll->is_mach;
+    if (mach_turn) {
+        if (machineWin(to_roll->curr_x, to_roll->curr_y, height, width, board)) return 1.0;
+        if (isTie(width, top)) return 0.0;
+    } else {
+        if (userWin(to_roll->curr_x, to_roll->curr_y, height, width, board)) return -1.0;
+        if (isTie(width, top)) return 0.0;
+    }
     for (int j = 0; j < width; j++) {
         buffer_top[j] = top[j];
         for (int i = 0; i < height; i++) buffer[i][j] = board[i][j];
     }
-    bool mach_turn = not to_roll->is_mach;
     while (true) {
         int choice = rand() % width;
         while (column_is_full(choice, true)) {
