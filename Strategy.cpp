@@ -57,6 +57,7 @@ extern "C" Point *getPoint(const int M, const int N, const int *top, const int *
     auto curr_time = clock();
 
     if (engine == nullptr) engine = new MyEngine(M, N, noX, noY, UCT_CONST);
+    cerr << "Here";
     auto to_place = engine->search(lastX, lastY, curr_time + PONDER_LIMIT);
     x = to_place->x;
     y = to_place->y;
