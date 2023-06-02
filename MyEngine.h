@@ -12,7 +12,8 @@
 class node {
 public:
     node(int x, int y, int w, int h, node* p);
-    ~node();
+    ~node() = default;
+    // Manage memory with clean()!
 
     inline bool is_terminal() const;
     inline bool is_fully_expanded() const;
@@ -22,7 +23,7 @@ public:
 
     // Core properties (Computed at initialisation)
     bool is_mach;
-    bool is_term;
+    bool is_term = false;
 
     // Board info
     int width, height;
@@ -43,6 +44,7 @@ class MyEngine {
 public:
     MyEngine(int m, int n, int bx, int by, double c);
     ~MyEngine();
+
     Point* search(int last_x, int last_y, time_t ponder_limit);
     inline bool column_is_full(int n, bool is_dry_run = false);
 

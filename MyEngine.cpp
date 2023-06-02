@@ -17,10 +17,6 @@ node::node(int x, int y, int w, int h, node* p): curr_x(x), curr_y(y), parent(p)
     is_mach = p and not p->is_mach;
 }
 
-node::~node() {
-    // Manage memory with clean()!
-}
-
 inline bool node::is_terminal() const { return is_term; }
 inline bool node::is_fully_expanded() const { return curr_children_cnt >= width; }
 
@@ -40,6 +36,8 @@ board(new int*[m]), top(new int[n]), buffer(new int*[m]), buffer_top(new int[n])
         board[i] = new int[n];
         memset(board[i], 0, sizeof(int) * n);
         buffer[i] = new int[n];
+        memset(buffer[i], 0, sizeof(int) * n);
+
     }
     for (int i = 0; i < n; i++) top[i] = m - 1;
     if (ban_x == m - 1) top[ban_y] = m - 2;
