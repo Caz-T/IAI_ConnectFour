@@ -28,6 +28,7 @@ void node::clean(node *to_save) const {
             delete children[i];
         }
     }
+    delete[] children;
 }
 
 MyEngine::MyEngine(const int m, const int n, const int bx, const int by, double c): height(m), width(n), ban_x(bx), ban_y(by),
