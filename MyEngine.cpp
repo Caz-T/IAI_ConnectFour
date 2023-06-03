@@ -205,7 +205,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
             propagate_backwards(vl, delta);
         }
         to_ret = memory->children[kanarazu];
-        cerr << "kanarazu triggered! " << kanarazu;
+        // cerr << "kanarazu triggered! " << kanarazu << endl;
     } else {
         int cnt = 0;
         while (clock() < ponder_limit and cnt < 1000000) {
@@ -222,7 +222,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
     memory = to_ret;
     memory->parent = nullptr;
     step_into(to_ret);
-    if (expansion_cnt % 100000) cerr << "Tree size: " << expansion_cnt << endl;
+    // if (expansion_cnt % 100000) cerr << "Tree size: " << expansion_cnt << endl;
     return new Point(to_ret->curr_x, to_ret->curr_y);
 }
 
@@ -290,18 +290,19 @@ bool MyEngine::leads_to_victory(int x, int y, int allowed_recursions) {
             step_from_faked(x, y);
             return false;
         }
-        bool flag = true;
+        bool flag = false;
         for (int response = 0; response < width; response++) {
             if (column_is_full(response, true)) continue;
-            if (not leads_to_victory(buffer_top[response], response, allowed_recursions - 1)) {
-                flag = false;
+            if (leads_to_victory(buffer_top[response], response, allowed_recursions - 1)) {
+                // successfully responded to this opposing move
+                flag = true;
                 break;
             }
         }
-        if (not flag) {
+        if (not flag) { // if this opposing move cannot be properly responded
             step_from_faked(opx, opy);
             step_from_faked(x, y);
-            return false;
+            return false;  // the move in question is not considered a kanarazu
         }
         step_from_faked(opx, opy);
     }
