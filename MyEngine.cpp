@@ -96,7 +96,7 @@ node* MyEngine::expand(node* to_expand) {
     assert(false);
 }
 node* MyEngine::best_child(node* to_check) const {
-    double best_val = -1;
+    double best_val = -3.0;
     node* to_ret = nullptr;
     for (int i = 0; i < to_check->curr_children_cnt; i++) {
         auto to_ex = to_check->children[i];
@@ -183,30 +183,25 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
         memory = new node(last_x, last_y, width, height, nullptr);
         if (last_x != -1 and last_y != -1) step_into(memory);
     } else {
-        for (int i = 0; i < memory->curr_children_cnt; i++) {
-            if (memory->children[i] == nullptr) continue;
-            if (last_y == memory->children[i]->curr_y) {
-                auto new_root = memory->children[i];
-                memory->clean(new_root);
-                delete memory;
-                memory = new_root;
-                memory->parent = nullptr;
-                step_into(new_root);
-                break;
-            }
-        }
+        auto new_root = memory->children[last_y];
+        memory->clean(new_root);
+        delete memory;
+        memory = new_root;
+        if (memory == nullptr) memory = new node(last_x, last_y, width, height, nullptr);
+        memory->parent = nullptr;
+        step_into(memory);
     }
+
     node* to_ret;
-    // After toying with our kanarazu algorithm we decided to abandon it
-    /*
-    int kanarazu = ikanakerebanaranai(3);
+    // After toying with our kanarazu algorithm we decided to mostly abandon it by setting layer_cnt to 1
+    int kanarazu = ikanakerebanaranai(1);
     if (kanarazu != -1) {
         if (memory->children[kanarazu] == nullptr) {
             memory->children[kanarazu] = new node(top[kanarazu], kanarazu, width, height, memory);
         }
         to_ret = memory->children[kanarazu];
         // cerr << "kanarazu triggered! " << kanarazu << endl;
-    } else {*/
+    } else {
         int cnt = 0;
         while (clock() < ponder_limit and cnt < 1000000) {
             auto vl = tree_policy(memory);
@@ -215,7 +210,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
             cnt += 1;
         }
         to_ret = best_child(memory);
-    /*}*/
+    }
 
     memory->clean(to_ret);
     delete memory;
@@ -239,8 +234,8 @@ void MyEngine::print_board() const {
 }
 
 int MyEngine::ikanakerebanaranai(int layer_cnt) {
-    // probe for definite wins
     for (int layer = 0; layer < layer_cnt; layer++) {
+        // probe for definite wins
         for (int j = 0; j < width; j++) {
             for (int i = 0; i < height; i++) {
                 buffer[i][j] = board[i][j];
@@ -251,6 +246,8 @@ int MyEngine::ikanakerebanaranai(int layer_cnt) {
             if (column_is_full(i, true)) continue;
             if (leads_to_victory(buffer_top[i], i, layer)) return i;
         }
+
+        // probe for definite losses
         for (int j = 0; j < width; j++) {
             for (int i = 0; i < height; i++) {
                 switch(board[i][j]) {
