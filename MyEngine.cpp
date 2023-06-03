@@ -197,7 +197,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
     }
     // cerr << "Initialised / Stepped forward memory" << endl;
     node* to_ret = nullptr;
-    int kanarazu = ikanakerebanaranai(2);
+    int kanarazu = ikanakerebanaranai(3);
     if (kanarazu != -1) {
         while (memory->children[kanarazu] == nullptr) {
             auto vl = tree_policy(memory);
