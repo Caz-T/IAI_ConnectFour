@@ -202,7 +202,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
             memory->children[kanarazu] = new node(top[kanarazu], kanarazu, width, height, memory);
         }
         to_ret = memory->children[kanarazu];
-        // cerr << "kanarazu triggered! " << kanarazu << endl;
+        cerr << "kanarazu triggered! " << kanarazu << endl;
     } else {
         while (clock() < ponder_limit) {
             auto vl = tree_policy(memory);
