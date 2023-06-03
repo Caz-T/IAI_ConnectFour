@@ -204,14 +204,11 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
         to_ret = memory->children[kanarazu];
         // cerr << "kanarazu triggered! " << kanarazu << endl;
     } else {
-        int cnt = 0;
-        while (clock() < ponder_limit and cnt < 1000000) {
+        while (clock() < ponder_limit) {
             auto vl = tree_policy(memory);
             auto delta = default_policy(vl);
             propagate_backwards(vl, delta);
-            cnt += 1;
         }
-        if (cnt == 1000000) cerr << "Count limit touched, time wasted = " << ponder_limit - clock() << "ms\n";
         to_ret = best_child(memory);
     }
 
