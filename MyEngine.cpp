@@ -293,7 +293,7 @@ bool MyEngine::leads_to_victory(int x, int y, int allowed_recursions) {
         bool flag = false;
         for (int response = 0; response < width; response++) {
             if (column_is_full(response, true)) continue;
-            if (leads_to_victory(buffer_top[response], response, allowed_recursions - 1)) {
+            if (allowed_recursions > 0 and leads_to_victory(buffer_top[response], response, allowed_recursions - 1)) {
                 // successfully responded to this opposing move
                 flag = true;
                 break;
