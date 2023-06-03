@@ -90,7 +90,7 @@ node* MyEngine::expand(node* to_expand) {
             expanded->is_term = (expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board))
                     or (not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board))
                     or isTie(width, top);
-            expansion_cnt += 1;
+            // expansion_cnt += 1;
             return expanded;
         }
     }
@@ -113,7 +113,7 @@ node* MyEngine::best_child(node* to_check) const {
     return to_ret;
 }
 node* MyEngine::tree_policy(node* curr_node) {
-    if (expansion_cnt > expansion_limit * 1.2) return curr_node;  // prevent overflow beforehand
+    // if (expansion_cnt > expansion_limit * 1.2) return curr_node;  // prevent overflow beforehand
     while (not curr_node->is_terminal()) {
         if (curr_node->is_fully_expanded()) {
             curr_node = best_child(curr_node);
@@ -196,7 +196,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
     }
 
     node* to_ret;
-    int kanarazu = ikanakerebanaranai(2);
+    int kanarazu = ikanakerebanaranai(1);
     if (kanarazu != -1) {
         if (memory->children[kanarazu] == nullptr) {
             memory->children[kanarazu] = new node(top[kanarazu], kanarazu, width, height, memory);

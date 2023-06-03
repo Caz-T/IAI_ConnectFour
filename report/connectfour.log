@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.11.15)  3 JUN 2023 21:23
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.11.15)  3 JUN 2023 23:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -589,24 +589,26 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 ]
-Overfull \hbox (3.74663pt too wide) in paragraph at lines 38--39
+Overfull \hbox (3.74663pt too wide) in paragraph at lines 36--37
 []\TU/SongtiSCLight(0)/b/n/10.53937 信 心 上 限 树 搜 索 \TU/lmr/m/n/10.53937 (\TU/lmr
 /bx/n/10.53937 U\TU/lmr/m/n/10.53937 pper \TU/lmr/bx/n/10.53937 C\TU/lmr/m/n/10
 .53937 onfidence bounds applied to \TU/lmr/bx/n/10.53937 T\TU/lmr/m/n/10.53937 
 rees) \TU/SongtiSCLight(0)/m/n/10.53937 是 \TU/lmr/m/n/10.53937 Monte-
  []
 
-[2] (./connectfour.aux)
+File: ./images//procedure.png Graphic file (type bmp)
+<./images//procedure.png>
+[2] [3] (./connectfour.aux)
 Package rerunfilecheck Info: File `connectfour.out' has not changed.
-(rerunfilecheck)             Checksum: B56DE5772D7A3E492659604DF8B4DB05;342.
+(rerunfilecheck)             Checksum: 5F3FEDCD1031240AE0AB208411A3C399;415.
  ) 
 Here is how much of TeX's memory you used:
- 14072 strings out of 476919
- 297014 string characters out of 5821839
- 637343 words of memory out of 5000000
- 33835 multiletter control sequences out of 15000+600000
+ 14083 strings out of 476919
+ 297201 string characters out of 5821839
+ 638428 words of memory out of 5000000
+ 33841 multiletter control sequences out of 15000+600000
  411490 words of font info for 85 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 101i,6n,104p,431b,334s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 101i,6n,104p,431b,338s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on connectfour.pdf (2 pages).
+Output written on connectfour.pdf (3 pages).
