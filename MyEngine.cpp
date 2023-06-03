@@ -112,6 +112,7 @@ node* MyEngine::best_child(node* to_check) const {
     return to_ret;
 }
 node* MyEngine::tree_policy(node* curr_node) {
+    if (expansion_cnt > expansion_limit * 1.2) return curr_node;  // prevent overflow beforehand
     while (not curr_node->is_terminal()) {
         if (curr_node->is_fully_expanded()) {
             curr_node = best_child(curr_node);
@@ -196,6 +197,8 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
         }
     }
     node* to_ret;
+    // After toying with our kanarazu algorithm we decided to abandon it
+    /*
     int kanarazu = ikanakerebanaranai(3);
     if (kanarazu != -1) {
         if (memory->children[kanarazu] == nullptr) {
@@ -203,7 +206,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
         }
         to_ret = memory->children[kanarazu];
         // cerr << "kanarazu triggered! " << kanarazu << endl;
-    } else {
+    } else {*/
         int cnt = 0;
         while (clock() < ponder_limit and cnt < 1000000) {
             auto vl = tree_policy(memory);
@@ -212,14 +215,13 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
             cnt += 1;
         }
         to_ret = best_child(memory);
-    }
+    /*}*/
 
     memory->clean(to_ret);
     delete memory;
     memory = to_ret;
     memory->parent = nullptr;
     step_into(to_ret);
-    // if (expansion_cnt % 100000) cerr << "Tree size: " << expansion_cnt << endl;
     return new Point(to_ret->curr_x, to_ret->curr_y);
 }
 
