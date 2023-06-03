@@ -78,7 +78,7 @@ private:
     int* buffer_top;
 
     int expansion_cnt = 1;  // records expansions
-    int expansion_limit = 0x7fffffff;
+    int expansion_limit = 10000000;
 
     double uct_const;
 
