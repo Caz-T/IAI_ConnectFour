@@ -174,12 +174,14 @@ void MyEngine::propagate_backwards(node* to_report, double delta) {
 }
 
 Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit) {
+    /*
     if (expansion_cnt > expansion_limit) {
         memory->clean();
         delete memory;
         memory = nullptr;
         expansion_cnt = 1;
     }
+     */
     if (memory == nullptr) {
         memory = new node(last_x, last_y, width, height, nullptr);
         if (last_x != -1 and last_y != -1) step_into(memory);
@@ -194,8 +196,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
     }
 
     node* to_ret;
-    // After toying with our kanarazu algorithm we decided to mostly abandon it by setting layer_cnt to 1
-    int kanarazu = ikanakerebanaranai(1);
+    int kanarazu = ikanakerebanaranai(3);
     if (kanarazu != -1) {
         if (memory->children[kanarazu] == nullptr) {
             memory->children[kanarazu] = new node(top[kanarazu], kanarazu, width, height, memory);
@@ -210,6 +211,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
             propagate_backwards(vl, delta);
             cnt += 1;
         }
+        if (cnt == 1000000) cerr << "Count limit touched, time wasted = " << ponder_limit - clock() << "ms\n";
         to_ret = best_child(memory);
     }
 
