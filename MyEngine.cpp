@@ -196,7 +196,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
     }
 
     node* to_ret;
-    int kanarazu = ikanakerebanaranai(3);
+    int kanarazu = ikanakerebanaranai(2);
     if (kanarazu != -1) {
         if (memory->children[kanarazu] == nullptr) {
             memory->children[kanarazu] = new node(top[kanarazu], kanarazu, width, height, memory);
