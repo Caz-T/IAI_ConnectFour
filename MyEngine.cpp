@@ -174,14 +174,6 @@ void MyEngine::propagate_backwards(node* to_report, double delta) {
 }
 
 Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit) {
-    /*
-    if (expansion_cnt > expansion_limit) {
-        memory->clean();
-        delete memory;
-        memory = nullptr;
-        expansion_cnt = 1;
-    }
-     */
     if (memory == nullptr) {
         memory = new node(last_x, last_y, width, height, nullptr);
         if (last_x != -1 and last_y != -1) step_into(memory);
@@ -202,14 +194,23 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
             memory->children[kanarazu] = new node(top[kanarazu], kanarazu, width, height, memory);
         }
         to_ret = memory->children[kanarazu];
-        cerr << "kanarazu triggered! " << kanarazu << endl;
     } else {
         while (clock() < ponder_limit) {
             auto vl = tree_policy(memory);
             auto delta = default_policy(vl);
             propagate_backwards(vl, delta);
         }
-        to_ret = best_child(memory);
+        // to_ret = best_child(memory);
+        double best_val = -3.0;
+        for (int i = 0; i < memory->curr_children_cnt; i++) {
+            auto to_ex = memory->children[i];
+            if (to_ex == nullptr) continue;
+            double curr_val = to_ex->q / to_ex->visit_count;
+            if (curr_val > best_val) {
+                best_val = curr_val;
+                to_ret = memory->children[i];
+            }
+        }
     }
 
     memory->clean(to_ret);
