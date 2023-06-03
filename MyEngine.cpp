@@ -195,14 +195,11 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
             }
         }
     }
-    // cerr << "Initialised / Stepped forward memory" << endl;
-    node* to_ret = nullptr;
+    node* to_ret;
     int kanarazu = ikanakerebanaranai(3);
     if (kanarazu != -1) {
-        while (memory->children[kanarazu] == nullptr) {
-            auto vl = tree_policy(memory);
-            auto delta = default_policy(vl);
-            propagate_backwards(vl, delta);
+        if (memory->children[kanarazu] == nullptr) {
+            memory->children[kanarazu] = new node(top[kanarazu], kanarazu, width, height, memory);
         }
         to_ret = memory->children[kanarazu];
         // cerr << "kanarazu triggered! " << kanarazu << endl;
@@ -293,7 +290,7 @@ bool MyEngine::leads_to_victory(int x, int y, int allowed_recursions) {
         bool flag = false;
         for (int response = 0; response < width; response++) {
             if (column_is_full(response, true)) continue;
-            if (allowed_recursions > 0 and leads_to_victory(buffer_top[response], response, allowed_recursions - 1)) {
+            if (leads_to_victory(buffer_top[response], response, allowed_recursions - 1)) {
                 // successfully responded to this opposing move
                 flag = true;
                 break;
