@@ -60,7 +60,7 @@ private:
     double default_policy(node*);
     void propagate_backwards(node*, double delta);
 
-    int ikanakerebanaranai();
+    int ikanakerebanaranai(int layer_cnt);
     bool leads_to_victory(int x, int y, int allowed_recursions);
     // A move "leads to victory", i.f.f.
     // i)   the move immediately wins the game; or
@@ -76,6 +76,9 @@ private:
     // Remember to reset after each operation!
     int** buffer;
     int* buffer_top;
+
+    int expansion_cnt = 1;  // records expansions
+    int expansion_limit = 0x7fffffff;
 
     double uct_const;
 

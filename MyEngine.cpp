@@ -89,6 +89,7 @@ node* MyEngine::expand(node* to_expand) {
             expanded->is_term = (expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board))
                     or (not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board))
                     or isTie(width, top);
+            expansion_cnt += 1;
             return expanded;
         }
     }
@@ -171,6 +172,12 @@ void MyEngine::propagate_backwards(node* to_report, double delta) {
 }
 
 Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit) {
+    if (expansion_cnt > expansion_limit) {
+        memory->clean();
+        delete memory;
+        memory = nullptr;
+        expansion_cnt = 1;
+    }
     if (memory == nullptr) {
         memory = new node(last_x, last_y, width, height, nullptr);
         if (last_x != -1 and last_y != -1) step_into(memory);
@@ -190,7 +197,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
     }
     // cerr << "Initialised / Stepped forward memory" << endl;
     node* to_ret = nullptr;
-    int kanarazu = ikanakerebanaranai();
+    int kanarazu = ikanakerebanaranai(1);
     if (kanarazu != -1) {
         while (memory->children[kanarazu] == nullptr) {
             auto vl = tree_policy(memory);
@@ -222,6 +229,7 @@ Point* MyEngine::search(const int last_x, const int last_y, time_t ponder_limit)
     memory = to_ret;
     memory->parent = nullptr;
     step_into(to_ret);
+    if (expansion_cnt % 100000) cerr << "Tree size: " << expansion_cnt << endl;
     // cerr << "Stepped forward" << endl;
     return new Point(to_ret->curr_x, to_ret->curr_y);
 }
@@ -239,9 +247,9 @@ void MyEngine::print_board() const {
     cout << endl;
 }
 
-int MyEngine::ikanakerebanaranai() {
+int MyEngine::ikanakerebanaranai(int layer_cnt) {
     // probe for definite wins
-    for (int layer = 0; layer < 1; layer++) {
+    for (int layer = 0; layer < layer_cnt; layer++) {
         for (int j = 0; j < width; j++) {
             for (int i = 0; i < height; i++) {
                 buffer[i][j] = board[i][j];
