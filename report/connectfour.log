@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.11.15)  4 JUN 2023 11:46
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.11.15)  4 JUN 2023 17:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -598,28 +598,32 @@ rees) \TU/SongtiSCLight(0)/m/n/10.53937 是 \TU/lmr/m/n/10.53937 Monte-
 
 File: ./images//procedure.png Graphic file (type bmp)
 <./images//procedure.png>
-[2] [3] [4]
-File: ./images//result.png Graphic file (type bmp)
-<./images//result.png>
+[2] [3]
 
-Overfull \hbox (12.95685pt too wide) in paragraph at lines 121--122
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[4]
+File: ./images//v54result.png Graphic file (type bmp)
+<./images//v54result.png>
+
+Overfull \hbox (12.95685pt too wide) in paragraph at lines 132--133
 []\TU/SongtiSCLight(0)/m/n/10.53937 我 们 在 \TU/lmr/m/n/10.53937 MyEngine.cpp/h \
 TU/SongtiSCLight(0)/m/n/10.53937 中 实 现 了 类 \TU/lmr/m/n/10.53937 MyEngine \TU/So
 ngtiSCLight(0)/m/n/10.53937 和 辅 助 类 \TU/lmr/m/n/10.53937 node\TU/SongtiSCLight(
 0)/m/n/10.53937 。| \TU/lmr/m/n/10.53937 MyEngine
  []
 
-[5] (./connectfour.aux)
+[5] [6] (./connectfour.aux)
 Package rerunfilecheck Info: File `connectfour.out' has not changed.
 (rerunfilecheck)             Checksum: EBD0704713E44D7D64ACB4E598951B4C;924.
  ) 
 Here is how much of TeX's memory you used:
  14155 strings out of 476919
- 300891 string characters out of 5821839
- 642032 words of memory out of 5000000
+ 300921 string characters out of 5821839
+ 641032 words of memory out of 5000000
  33905 multiletter control sequences out of 15000+600000
  413072 words of font info for 94 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  101i,8n,104p,431b,421s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on connectfour.pdf (5 pages).
+Output written on connectfour.pdf (6 pages).
