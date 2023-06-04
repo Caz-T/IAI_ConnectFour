@@ -7,7 +7,7 @@
 
 using namespace std;
 const double PONDER_LIMIT = 2.0 * CLOCKS_PER_SEC;
-const double UCT_CONST = 0.5;
+const double UCT_CONST = 0.6;
 
 MyEngine* engine = nullptr;
 
