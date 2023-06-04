@@ -56,15 +56,11 @@ bool MyEngine::column_is_full(const int n, bool is_dry_run) {
 }
 
 void MyEngine::step_into(node* v) {
-    // cout << "Stepping into (" << v->curr_x << ", " << v->curr_y << ")" << endl;
-    // print_board();
     board[v->curr_x][v->curr_y] = v->is_mach ? 2 : 1;
     top[v->curr_y] -= 1;
     if (v->curr_y == ban_y and top[v->curr_y] == ban_x) top[v->curr_y] -= 1;
 }
 void MyEngine::step_from(node* v) {
-    // cout << "Stepping out from (" << v->curr_x << ", " << v->curr_y << ")" << endl;
-    // print_board();
     board[v->curr_x][v->curr_y] = 0;
     top[v->curr_y] = v->curr_x;
 }
@@ -90,7 +86,6 @@ node* MyEngine::expand(node* to_expand) {
             expanded->is_term = (expanded->is_mach and machineWin(expanded->curr_x, expanded->curr_y, height, width, board))
                     or (not expanded->is_mach and userWin(expanded->curr_x, expanded->curr_y, height, width, board))
                     or isTie(width, top);
-            // expansion_cnt += 1;
             return expanded;
         }
     }
@@ -113,7 +108,6 @@ node* MyEngine::best_child(node* to_check) const {
     return to_ret;
 }
 node* MyEngine::tree_policy(node* curr_node) {
-    // if (expansion_cnt > expansion_limit * 1.2) return curr_node;  // prevent overflow beforehand
     while (not curr_node->is_terminal()) {
         if (curr_node->is_fully_expanded()) {
             curr_node = best_child(curr_node);
@@ -124,7 +118,6 @@ node* MyEngine::tree_policy(node* curr_node) {
     return curr_node;
 }
 double MyEngine::default_policy(node* to_roll) {
-    // cerr << "Starting default policy" << endl;
     bool mach_turn = to_roll->is_mach;
     if (mach_turn) {
         if (machineWin(to_roll->curr_x, to_roll->curr_y, height, width, board)) return 1.0;
@@ -134,12 +127,10 @@ double MyEngine::default_policy(node* to_roll) {
         if (isTie(width, top)) return 0.0;
     }
     mach_turn = not mach_turn;
-    // cerr << "Game not ended, starting rollout" << endl;
     for (int j = 0; j < width; j++) {
         buffer_top[j] = top[j];
         for (int i = 0; i < height; i++) buffer[i][j] = board[i][j];
     }
-    // cerr << "Constructed rollout board" << endl;
     while (true) {
         int choice_y = rand() % width;
         while (column_is_full(choice_y, true)) {
@@ -158,8 +149,6 @@ double MyEngine::default_policy(node* to_roll) {
             if (isTie(width, buffer_top)) return 0.0;
         }
         mach_turn = not mach_turn;
-
-        // cerr << "Rolling out..." << endl;
     }
     assert(false);
 }
@@ -264,8 +253,7 @@ int MyEngine::ikanakerebanaranai(int layer_cnt) {
             if (leads_to_victory(buffer_top[i], i, layer)) return i;
         }
     }
-
-    return -1;
+    return -1;  // zannendesu
 }
 
 bool MyEngine::leads_to_victory(int x, int y, int allowed_recursions) {

@@ -77,9 +77,6 @@ private:
     int** buffer;
     int* buffer_top;
 
-    // int expansion_cnt = 1;  // records expansions
-    // int expansion_limit = 10000000;
-
     double uct_const;
 
     // for debugging only
